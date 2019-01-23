@@ -30,9 +30,6 @@ along with The Arduino WiFiEsp library.  If not, see
 // Maximum size of a SSID
 #define WL_SSID_MAX_LENGTH 32
 
-// Maximum size of a SSID
-#define WL_STRMAC_MAX_LENGTH 32
-
 // Size of a MAC-address or BSSID
 #define WL_MAC_ADDR_LENGTH 6
 
@@ -123,7 +120,7 @@ class EspDrv
 
 public:
 
-    static void wifiDriverInit(const Stream *espSerial, const bool bESP01);
+    static void wifiDriverInit(Stream *espSerial);
 
 
     /* Start Wifi connection with passphrase
@@ -131,13 +128,13 @@ public:
      * param ssid: Pointer to the SSID string.
      * param passphrase: Passphrase. Valid characters in a passphrase must be between ASCII 32-126 (decimal).
      */
-    static bool wifiConnect(char* ssid, const char *passphrase, const char *mac = NULL);
+    static bool wifiConnect(const char* ssid, const char* passphrase);
 
 
     /*
 	* Start the Access Point
 	*/
-	static bool wifiStartAP(char* ssid, const char* pwd, uint8_t channel, uint8_t enc, uint8_t espMode);
+	static bool wifiStartAP(const char* ssid, const char* pwd, uint8_t channel, uint8_t enc, uint8_t espMode);
 
 
     /*
@@ -179,10 +176,7 @@ public:
      */
     static void getIpAddress(IPAddress& ip);
 
-    static void getIpAddressAP(IPAddress& ip);
-
-    static void getLocalIpAddress(IPAddress& ip);
-
+	static void getIpAddressAP(IPAddress& ip);
 
     /*
      * Get the interface IP netmask.
@@ -228,7 +222,7 @@ public:
      *
      * return: Number of discovered networks
      */
-    static uint8_t getScanNetworks(const char* ssid = NULL);
+    static uint8_t getScanNetworks();
 
 	/*
      * Return the SSID discovered during the network scan.
@@ -238,8 +232,6 @@ public:
      * return: ssid string of the specified item on the networks scanned list
      */
     static char* getSSIDNetoworks(uint8_t networkItem);
-
-    static char* getMACNetoworks(uint8_t networkItem);
 
     /*
      * Return the RSSI of the networks discovered during the scanNetworks
@@ -270,6 +262,7 @@ public:
 	// Client/Server methods
 	////////////////////////////////////////////////////////////////////////////
 
+
     static bool startServer(uint16_t port, uint8_t sock);
     static bool startClient(const char* host, uint16_t port, uint8_t sock, uint8_t protMode);
     static void stopClient(uint8_t sock);
@@ -279,11 +272,11 @@ public:
     static int getDataBuf(uint8_t connId, uint8_t *buf, uint16_t bufSize);
     static bool sendData(uint8_t sock, const uint8_t *data, uint16_t len);
     static bool sendData(uint8_t sock, const __FlashStringHelper *data, uint16_t len, bool appendCrLf=false);
-	  static bool sendDataUdp(uint8_t sock, const char* host, uint16_t port, const uint8_t *data, uint16_t len);
+	static bool sendDataUdp(uint8_t sock, const char* host, uint16_t port, const uint8_t *data, uint16_t len);
     static uint16_t availData(uint8_t connId);
 
 
-	  static bool ping(const char *host);
+	static bool ping(const char *host);
     static void reset();
 
     static void getRemoteIpAddress(IPAddress& ip);
@@ -298,8 +291,8 @@ private:
 	static long _bufPos;
 	static uint8_t _connId;
 
-	static uint16_t _remotePort, _Timeout;
-	static uint8_t  _remoteIp[WL_IPV4_LENGTH], _SendCmdDelay;
+	static uint16_t _remotePort;
+	static uint8_t  _remoteIp[WL_IPV4_LENGTH];
 
 
 	// firmware version string
@@ -309,7 +302,6 @@ private:
 	static char 	_networkSsid[WL_NETWORKS_LIST_MAXNUM][WL_SSID_MAX_LENGTH];
 	static int32_t 	_networkRssi[WL_NETWORKS_LIST_MAXNUM];
 	static uint8_t 	_networkEncr[WL_NETWORKS_LIST_MAXNUM];
-    static char 	_networkMac[WL_NETWORKS_LIST_MAXNUM][WL_STRMAC_MAX_LENGTH];
 
 
 	// settings of current selected network
@@ -330,7 +322,7 @@ private:
 	static bool sendCmdGet(const __FlashStringHelper* cmd, const char* startTag, const char* endTag, char* outStr, int outStrLen);
 	static bool sendCmdGet(const __FlashStringHelper* cmd, const __FlashStringHelper* startTag, const __FlashStringHelper* endTag, char* outStr, int outStrLen);
 
-	static int readUntil(unsigned long timeout, const char* tag=NULL, bool findTags=true);
+	static int readUntil(int timeout, const char* tag=NULL, bool findTags=true);
 
 	static void espEmptyBuf(bool warn=true);
 

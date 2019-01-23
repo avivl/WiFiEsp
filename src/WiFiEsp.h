@@ -48,7 +48,7 @@ public:
 	*
 	* param espSerial: the serial interface (HW or SW) used to communicate with the ESP module
 	*/
-	static void init(const Stream* espSerial, const bool bIsESP01 = false);
+	static void init(Stream* espSerial);
 
 
 	/**
@@ -72,7 +72,7 @@ public:
 	* param passphrase: Passphrase. Valid characters in a passphrase
 	*		  must be between ASCII 32-126 (decimal).
 	*/
-	int begin(const char* ssid, const char* passphrase, const char* mac=NULL);
+	int begin(const char* ssid, const char* passphrase);
 
 
 	/**
@@ -180,7 +180,7 @@ public:
      *
      * return: Number of discovered networks
      */
-    int8_t scanNetworks(const char *ssid = NULL);
+    int8_t scanNetworks();
 
     /*
      * Return the SSID discovered during the network scan.
@@ -190,8 +190,6 @@ public:
      * return: ssid string of the specified item on the networks scanned list
      */
     char*	SSID(uint8_t networkItem);
-
-	char*	MAC(uint8_t networkItem);
 
     /*
      * Return the encryption type of the networks discovered during the scanNetworks
