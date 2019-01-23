@@ -95,11 +95,10 @@ void EspDrv::wifiDriverInit(const Stream *espSerial, const bool bESP01)
 		delay(5000);
 		return;
 	}
-
 	reset();
-
-	// check firmware version
 	getFwVersion();
+	sendCmd(F("AT+UART_DEF=115200,8,1,0,0"));
+
 
 	// prints a warning message if the firmware is not 1.X or 2.X
 	if ((fwVersion[0] != '1' and fwVersion[0] != '2') or
@@ -160,14 +159,13 @@ bool EspDrv::wifiConnect(char* ssid, const char *passphrase, const char* mac)
 
     // connect to access point, use CUR mode to avoid connection at boot
 	int ret;
-	delay(_SendCmdDelay);
 	if (mac == NULL)
 	{
 		ret = sendCmd(F("AT+CWJAP_CUR=\"%s\",\"%s\""), _Timeout, ssid, passphrase);
 	}
 	else
 	{
-		 ret = sendCmd(F("AT+CWJAP_CUR=\"%s\",\"%s\",\"%s\""), _Timeout, ssid, passphrase,mac);
+		 ret = sendCmd(F("AT+CWJAP_CUR=\"%s\",\"%s\",\"%s\""), _Timeout*2, ssid, passphrase,mac);
 	}
 
 	if (ret==TAG_OK)
