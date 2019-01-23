@@ -31,10 +31,10 @@ WiFiEspClass::WiFiEspClass()
 
 }
 
-void WiFiEspClass::init(Stream* espSerial)
+void WiFiEspClass::init(const Stream* espSerial, const bool bIsESP01)
 {
     LOGINFO(F("Initializing ESP module"));
-	EspDrv::wifiDriverInit(espSerial);
+	EspDrv::wifiDriverInit(espSerial, bIsESP01);
 }
 
 
@@ -45,15 +45,15 @@ char* WiFiEspClass::firmwareVersion()
 }
 
 
-int WiFiEspClass::begin(const char* ssid, const char* passphrase)
+int WiFiEspClass::begin(const char* ssid, const char* passphrase, const char* mac)
 {
     espMode = 1;
-	if (EspDrv::wifiConnect(ssid, passphrase))
+	if (EspDrv::wifiConnect((char*)ssid, passphrase, mac))
 		return WL_CONNECTED;
 
 	return WL_CONNECT_FAILED;
 }
-
+ 
 
 int WiFiEspClass::beginAP(const char* ssid, uint8_t channel, const char* pwd, uint8_t enc, bool apOnly)
 {
@@ -62,7 +62,7 @@ int WiFiEspClass::beginAP(const char* ssid, uint8_t channel, const char* pwd, ui
     else
         espMode = 3;
     
-    if (EspDrv::wifiStartAP(ssid, pwd, channel, enc, espMode))
+    if (EspDrv::wifiStartAP((char*) ssid, pwd, channel, enc, espMode))
 		return WL_CONNECTED;
 
 	return WL_CONNECT_FAILED;
@@ -150,14 +150,19 @@ int32_t WiFiEspClass::RSSI()
 }
 
 
-int8_t WiFiEspClass::scanNetworks()
+int8_t WiFiEspClass::scanNetworks(const char *ssid)
 {
-	return EspDrv::getScanNetworks();
+	return EspDrv::getScanNetworks(ssid);
 }
 
 char* WiFiEspClass::SSID(uint8_t networkItem)
 {
 	return EspDrv::getSSIDNetoworks(networkItem);
+}
+
+char* WiFiEspClass::MAC(uint8_t networkItem)
+{
+	return EspDrv::getMACNetoworks(networkItem);
 }
 
 int32_t WiFiEspClass::RSSI(uint8_t networkItem)
@@ -194,9 +199,9 @@ void ESP8266::hardReset(void)
 connected = false;
 strcpy(ip, "");
 digitalWrite(ESP8266_RST, LOW);
-delay(ESP8266_HARD_RESET_DURATION);
+delay(ESP8266_HARD_RESET_DURACTION);
 digitalWrite(ESP8266_RST, HIGH);
-delay(ESP8266_HARD_RESET_DURATION);
+delay(ESP8266_HARD_RESET_DURACTION);
 }
 */
 
